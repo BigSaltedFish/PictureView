@@ -129,6 +129,7 @@ object PictureView {
      */
     fun setSinglePicture(data: String, view: View): PictureView {
         imgData = arrayListOf(data)
+        imgOriginalData = arrayListOf()
         clickView = WeakReference(view)
         return this
     }
@@ -326,9 +327,9 @@ object PictureView {
                 }
 
             }
-            if (imgData.size>0 && imgOriginalData.size<=0){
+            if (imgData.size>0 && (imgOriginalData!=null && imgOriginalData.size<=0)){
                 f.setData(intArrayOf(getItemView().measuredWidth, getItemView().measuredHeight), getCurrentViewLocation(), imgData[i], true)
-            }else if(imgData.size>0 && imgOriginalData.size>0){
+            }else if(imgData.size>0 &&  (imgOriginalData!=null && imgOriginalData.size>0)){
                 f.setData(intArrayOf(getItemView().measuredWidth, getItemView().measuredHeight), getCurrentViewLocation(), imgData[i], imgOriginalData[i], true)
             }
             f.longClickListener = longClickListener
