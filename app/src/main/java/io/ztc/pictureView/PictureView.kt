@@ -134,6 +134,16 @@ object PictureView {
     }
 
     /**
+     * 设置点击一个图片
+     */
+    fun setSingleOriginalPicture(data: String,originalUrl: String, view: View): PictureView {
+        imgData = arrayListOf(data)
+        imgOriginalData = arrayListOf(originalUrl)
+        clickView = WeakReference(view)
+        return this
+    }
+
+    /**
      * 设置图片数据
      */
     fun setPictureData(data: ArrayList<String>): PictureView {
