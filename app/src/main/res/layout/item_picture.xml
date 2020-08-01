@@ -23,6 +23,7 @@
                 android:id="@+id/loading"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:visibility="gone"
                 />
             <TextView
                 android:id="@+id/proText"
@@ -44,6 +45,7 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/bai_bian_btn_back"
             android:text="查看原图"
+            android:visibility="gone"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:textColor="#ffffff" />

@@ -22,6 +22,8 @@ class PictureViewFragment : AppLazyFragment() {
     private var mExitLocation = IntArray(2)
     private var mInAnim = true
     private var mPicData = ""
+    private var mOriginalPicData = ""
+
     /**
      * 每次选中图片后设置图片信息
      */
@@ -32,7 +34,19 @@ class PictureViewFragment : AppLazyFragment() {
         mPicData = picData
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    fun setData(imgSize: IntArray, exitLocation: IntArray, picData: String,OriginalPicData:String, inAnim: Boolean) {
+        mImgSize = imgSize
+        mExitLocation = exitLocation
+        mInAnim = inAnim
+        mPicData = picData
+        mOriginalPicData = OriginalPicData
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         return inflater.inflate(R.layout.item_picture, container, false)
     }
@@ -42,14 +56,18 @@ class PictureViewFragment : AppLazyFragment() {
     }
 
 
-
     override fun onLazyLoad() {
 
-
-        if (PictureView.mInterface != null) {
-            PictureView.mInterface!!.show(mIv, mPicData)
-        } else {
-            throw RuntimeException("请设置图片加载回调 ShowImageViewInterface")
+        when {
+            PictureView.mLoadAndImgInterface != null -> {
+                PictureView.mLoadAndImgInterface!!.show(mIv,loading, proText,opBtn,mPicData,mOriginalPicData)
+            }
+            PictureView.mInterface != null -> {
+                PictureView.mInterface!!.show(mIv, mPicData)
+            }
+            else -> {
+                throw RuntimeException("请设置图片加载回调 ShowImageViewInterface")
+            }
         }
 
         var alpha = 1f  // 透明度
@@ -94,9 +112,20 @@ class PictureViewFragment : AppLazyFragment() {
         if (mInAnim)
             mIv.post {
 
-                val scaleOa = ObjectAnimator.ofFloat(mIv, "scale", mImgSize[0].toFloat() / mIv.width, 1f)
-                val xOa = ObjectAnimator.ofFloat(mIv, "translationX", mExitLocation[0].toFloat() - mIv.width / 2, 0f)
-                val yOa = ObjectAnimator.ofFloat(mIv, "translationY", mExitLocation[1].toFloat() - mIv.height / 2, 0f)
+                val scaleOa =
+                    ObjectAnimator.ofFloat(mIv, "scale", mImgSize[0].toFloat() / mIv.width, 1f)
+                val xOa = ObjectAnimator.ofFloat(
+                    mIv,
+                    "translationX",
+                    mExitLocation[0].toFloat() - mIv.width / 2,
+                    0f
+                )
+                val yOa = ObjectAnimator.ofFloat(
+                    mIv,
+                    "translationY",
+                    mExitLocation[1].toFloat() - mIv.height / 2,
+                    0f
+                )
 
                 val set = AnimatorSet()
                 set.duration = 250
@@ -136,7 +165,6 @@ class PictureViewFragment : AppLazyFragment() {
 
 
         mIv.setOnClickListener {
-
             mIv.exit()
         }
 

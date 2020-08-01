@@ -32,11 +32,15 @@ object PictureView {
 
     private var context:AppCompatActivity? = null
 
+
     internal var mInterface: ShowImageViewInterface? = null
+    internal var mLoadAndImgInterface:ShowLoadAndImgInterface? = null
     private var mCreatedInterface: OnPictureViewCreatedListener? = null
     private var mDestroyInterface: OnPictureViewDestroyListener? = null
 
+
     private lateinit var imgData: ArrayList<String> // 图片数据
+    private lateinit var imgOriginalData: ArrayList<String> // 原图片数据
     private lateinit var container: WeakReference<ViewGroup>   // 存放图片的容器， ListView/GridView/RecyclerView
     private var currentPage = 0    // 当前页
 
@@ -93,8 +97,15 @@ object PictureView {
 //    private val mDot = intArrayOf(R.drawable.no_selected_dot, R.drawable.selected_dot)
 
 
+    interface ShowLoadAndImgInterface {
+        fun show(iv: ImageView,progressBar: ProgressBar,proText:TextView, opBtn:Button,url: String,OriginalUrl: String)
+    }
+
+    /**
+     * 进度条控制器
+     */
     interface ShowImageViewInterface {
-        fun show(iv: ImageView, url: String)
+        fun show(v: ImageView, url: String)
     }
 
     /**
@@ -102,6 +113,14 @@ object PictureView {
      */
     fun setShowImageViewInterface(i: ShowImageViewInterface): PictureView {
         mInterface = i
+        return this
+    }
+
+    /**
+     * 全功能显示插件
+     */
+    fun setLoadAndImgInterface(loadAndImgInterface: ShowLoadAndImgInterface): PictureView {
+        mLoadAndImgInterface = loadAndImgInterface
         return this
     }
 
@@ -119,6 +138,14 @@ object PictureView {
      */
     fun setPictureData(data: ArrayList<String>): PictureView {
         imgData = data
+        return this
+    }
+
+    /**
+     * 设置原图图片数据
+     */
+    fun setOriginalPictureData(data: ArrayList<String>): PictureView {
+        imgOriginalData = data
         return this
     }
 
@@ -228,7 +255,7 @@ object PictureView {
         return this
     }
 
-    @SuppressLint("ObjectAnimatorBinding")
+    @SuppressLint("ObjectAnimatorBinding", "SetTextI18n")
     private fun show(activity: AppCompatActivity) {
 
 
@@ -289,7 +316,11 @@ object PictureView {
                 }
 
             }
-            f.setData(intArrayOf(getItemView().measuredWidth, getItemView().measuredHeight), getCurrentViewLocation(), imgData[i], true)
+            if (imgData.size>0 && imgOriginalData.size<=0){
+                f.setData(intArrayOf(getItemView().measuredWidth, getItemView().measuredHeight), getCurrentViewLocation(), imgData[i], true)
+            }else if(imgData.size>0 && imgOriginalData.size>0){
+                f.setData(intArrayOf(getItemView().measuredWidth, getItemView().measuredHeight), getCurrentViewLocation(), imgData[i], imgOriginalData[i], true)
+            }
             f.longClickListener = longClickListener
             fragments.add(f)
         }
@@ -313,6 +344,7 @@ object PictureView {
                 }
             }
 
+            @SuppressLint("SetTextI18n")
             override fun onPageSelected(position: Int) {
                 currentPage = position
 
